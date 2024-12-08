@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      /* Base container */
+      .tree {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        overflow-x: auto;
+        min-width: 100%;
+      }
+
+      /* Generation styling */
+      .generation {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: fit-content;
+        min-width: 100%;
+        margin-bottom: 60px;
+        position: relative;
+      }
+
+      .generation-label {
+        font-weight: bold;
+        margin: 20px 0;
+        font-size: 1.2em;
+        background: #f0f0f0;
+        padding: 5px 15px;
+        border-radius: 15px;
+        position: sticky;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+      }
+
+      /* Branch organization */
+      .branch-group {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+        position: relative;
+        padding: 0 20px;
+      }
+
+      .family-branch {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+
+      /* Couple and person styling */
+      .couple {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+        position: relative;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+      }
+
+      .person {
+        background: #fff;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        width: 200px;
+        text-align: center;
+      }
+
+      .person.deceased {
+        background: #f8f8f8;
+      }
+      .person.immigrant {
+        border-color: #4a90e2;
+      }
+      .person.root {
+        border-color: #2ecc71;
+        border-width: 2px;
+      }
+      .person.unknown {
+        background: #f0f0f0;
+        border-style: dashed;
+        font-style: italic;
+      }
+
+      /* Connection lines */
+      .connection-line {
+        position: absolute;
+        background: #999;
+      }
+
+      .vertical-line {
+        width: 2px;
+        height: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .horizontal-line {
+        height: 2px;
+        bottom: -20px;
+      }
+
+      /* Parent labels */
+      .parent-label {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.85em;
+        color: #666;
+        background: white;
+        padding: 2px 8px;
+        border-radius: 10px;
+        white-space: nowrap;
+        z-index: 1;
+      }
+
+      /* Person details */
+      .name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .dates,
+      .location,
+      .marriage,
+      .maiden-name {
+        font-size: 0.85em;
+        color: #666;
+        margin-bottom: 2px;
+      }
+
+      /* Container for siblings */
+      .siblings {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      /* Make the tree horizontally scrollable */
+      .tree-container {
+        width: 100%;
+        overflow-x: auto;
+        padding: 20px 0;
+        min-width: fit-content; /* Add this */
+        display: flex; /* Add this */
+        justify-content: center;
+      }
+
+      /* Branch connections */
+      .branch-connection {
+        position: absolute;
+        bottom: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 40px;
+        background: #999;
+      }
+
+      .child-connector {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 40px;
+        background: #999;
+      }
+
+      .branch-label {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 0 5px;
+        font-size: 0.8em;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tree-container">
+      <div class="tree">
+        <!-- Generation 0 - Current -->
+        <div class="generation">
+          <div class="generation-label">Current Generation</div>
+          <div class="siblings">
+            <div class="person root">
+              <div class="name">Ryan Klaus Fitzpatrick</div>
+            </div>
+            <div class="person root">
+              <div class="name">Lindsey Jean Fitzpatrick</div>
+            </div>
+          </div>
+          <div class="child-connector"></div>
+        </div>
+
+        <!-- Generation 1 - Parents -->
+        <div class="generation">
+          <div class="generation-label">Generation 1 - Parents</div>
+          <div class="family-branch">
+            <div class="couple">
+              <div class="person">
+                <div class="name">Robert Klaus Fitzpatrick</div>
+              </div>
+              <div class="person">
+                <div class="name">Jean Carol Evans</div>
+                <div class="maiden-name">(née Evans)</div>
+              </div>
+            </div>
+            <div class="child-connector"></div>
+          </div>
+        </div>
+
+        <!-- Generation 2 - Grandparents -->
+        <div class="generation">
+          <div class="generation-label">Generation 2 - Grandparents</div>
+          <div class="branch-group">
+            <div class="family-branch">
+              <div class="parent-label">Robert's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Robert John Fitzpatrick</div>
+                  <div class="dates">b.1927 - d.2006</div>
+                  <div class="location">Stone Harbor, Cape May, NJ</div>
+                </div>
+                <div class="person">
+                  <div class="name">Patricia Klaus</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+            <div class="family-branch">
+              <div class="parent-label">Jean's Parents</div>
+              <div class="couple">
+                <div class="person">
+                  <div class="name">Ralph W. Evans</div>
+                  <div class="dates">b.1927</div>
+                  <div class="location">New Jersey</div>
+                </div>
+                <div class="person">
+                  <div class="name">Carol Bingham</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generation 3 - Great Grandparents -->
+        <div class="generation">
+          <div class="generation-label">Generation 3 - Great Grandparents</div>
+          <div class="branch-group">
+            <!-- Robert John Fitzpatrick's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Robert John's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">William J. Fitzpatrick</div>
+                  <div class="location">Delaware, USA</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Margaret B. Sharpley</div>
+                  <div class="dates">b.1876</div>
+                  <div class="location">Virginia</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+            <!-- Patricia Klaus's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Patricia's Parents</div>
+              <div class="couple">
+                <div class="person immigrant deceased">
+                  <div class="name">Otto Herman Klaus</div>
+                  <div class="dates">b.1904 - d.1982</div>
+                  <div class="location">Born: Germany</div>
+                  <div class="location">Died: Havertown, PA</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Emily J. Fulmer</div>
+                  <div class="dates">b.1904 - d.1960</div>
+                  <div class="location">Pennsylvania</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+            <!-- Ralph Evans's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Ralph's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">William J. Evans</div>
+                  <div class="location">Delaware, USA</div>
+                  <div class="marriage">m.1890</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Ralph Burton Evans</div>
+                  <div class="dates">b.1896</div>
+                  <div class="location">Philadelphia, PA</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+            <!-- Carol Bingham's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Carol's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Milton Townsend Bingham</div>
+                  <div class="dates">b.1900 - d.1964</div>
+                  <div class="location">Ocean View, NJ</div>
+                  <div class="marriage">m.1924</div>
+                </div>
+                <div class="person">
+                  <div class="name">Elsie Henderson</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generation 4 - Great-Great Grandparents -->
+        <div class="generation">
+          <div class="generation-label">
+            Generation 4 - Great-Great Grandparents
+          </div>
+          <div class="branch-group">
+            <!-- William J. Fitzpatrick's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">William J. Fitzpatrick's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Fitzpatrick</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Margaret Sharpley's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Margaret Sharpley's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Sharpley</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Otto Klaus's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Otto Klaus's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Klaus</div>
+                  <div class="location">Germany</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Emily Fulmer's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Emily Fulmer's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Fulmer</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Milton Bingham's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Milton Bingham's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Charles Pittman McKaig</div>
+                  <div class="dates">b.1836 - d.1927</div>
+                  <div class="location">New Jersey</div>
+                  <div class="marriage">m.1863 Camden, NJ</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Catherine A "Kate" Houck</div>
+                  <div class="dates">b.1844 - d.1919</div>
+                  <div class="location">Dorchester, Cumberland, NJ</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Elsie Henderson's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Elsie Henderson's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Henderson</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generation 5 -->
+        <div class="generation">
+          <div class="generation-label">Generation 5 - Born 1800s-1830s</div>
+          <div class="branch-group">
+            <!-- Charles McKaig's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Charles McKaig's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">George McKaig</div>
+                  <div class="dates">b.1789 - d.1879</div>
+                  <div class="location">Londonderry, Northern Ireland</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Sarah Ludlam</div>
+                  <div class="dates">b.1797 - d.1887</div>
+                  <div class="location">Voorhees, Camden, NJ</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Catherine Houck's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Catherine Houck's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Captain William Houck</div>
+                  <div class="dates">b.1815</div>
+                  <div class="location">Pennsylvania</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Mary A Hunter</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generation 6 -->
+        <div class="generation">
+          <div class="generation-label">Generation 6 - Born Late 1700s</div>
+          <div class="branch-group">
+            <!-- George McKaig's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">George McKaig's Parents</div>
+              <div class="couple">
+                <div class="person immigrant deceased">
+                  <div class="name">Daniel McKeague</div>
+                  <div class="dates">b.1761 - d.1834</div>
+                  <div class="location">Born: Ireland</div>
+                  <div class="location">Died: Weymouth, Atlantic, NJ</div>
+                  <div class="marriage">m.1812 Abbey Paisley, Scotland</div>
+                </div>
+                <div class="person immigrant deceased">
+                  <div class="name">Kate Black</div>
+                  <div class="dates">b.1740</div>
+                  <div class="location">
+                    Born: Newry, Down, Northern Ireland
+                  </div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Sarah Ludlam's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Sarah Ludlam's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">James Ludlam</div>
+                  <div class="dates">b.1765 - d.1826</div>
+                  <div class="location">Born: Dennisville, Cape May, NJ</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Martha Johnson</div>
+                  <div class="dates">b.1772 - d.1853</div>
+                  <div class="location">Born: Goshen, Cape May, NJ</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generation 7 -->
+        <div class="generation">
+          <div class="generation-label">Generation 7 - Born Mid-1700s</div>
+          <div class="branch-group">
+            <!-- James Ludlam's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">James Ludlam's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Anthony Ludlam</div>
+                  <div class="dates">b.1728 - d.1777</div>
+                  <div class="location">New Jersey</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Unknown Ludlam</div>
+                  <div class="dates">b.1737 - d.1770</div>
+                  <div class="location">Cape May, NJ</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Martha Johnson's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Martha Johnson's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">David Johnson</div>
+                  <div class="dates">b.1748 - d.1805</div>
+                  <div class="location">Cape May, NJ</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Sarah Holden</div>
+                  <div class="dates">b.1752 - d.1800</div>
+                  <div class="location">Cape May, NJ</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Generation 8 -->
+        <div class="generation">
+          <div class="generation-label">Generation 8 - Born Early 1700s</div>
+          <div class="branch-group">
+            <!-- Anthony Ludlam's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Anthony Ludlam's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Ludlam</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- David Johnson's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">David Johnson's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Johnson</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Sarah Holden's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Sarah Holden's Parents</div>
+              <div class="couple">
+                <div class="person unknown">
+                  <div class="name">Unknown Holden</div>
+                </div>
+                <div class="person unknown">
+                  <div class="name">Unknown</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Van De Borgt Branch (appears disconnected in source docs but included for completeness) -->
+        <div class="generation">
+          <div class="generation-label">Van De Borgt Branch</div>
+          <div class="branch-group">
+            <!-- Marie Van De Borgt's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Marie Van De Borgt's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Johannes Antonius Goverts</div>
+                  <div class="dates">b.1856 - d.1930</div>
+                  <div class="location">
+                    Born: Dordrecht, Zuid-Holland, Netherlands
+                  </div>
+                  <div class="location">
+                    Died: Rotterdam, Zuid-Holland, Netherlands
+                  </div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Johanna Maria Jorissen</div>
+                  <div class="dates">b.1859</div>
+                  <div class="location">
+                    Dordrecht, Zuid-Holland, Netherlands
+                  </div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Johannes Goverts's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Johannes Goverts's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Matthijs Marinus Goverts</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Maria Catharina Cocu</div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+
+            <!-- Johanna Jorissen's Parents -->
+            <div class="family-branch">
+              <div class="parent-label">Johanna Jorissen's Parents</div>
+              <div class="couple">
+                <div class="person deceased">
+                  <div class="name">Antonius Jorissen</div>
+                </div>
+                <div class="person deceased">
+                  <div class="name">Anna Cornelia Schillemans</div>
+                  <div class="dates">d.1910</div>
+                  <div class="location">
+                    Rotterdam, Zuid-Holland, Netherlands
+                  </div>
+                </div>
+              </div>
+              <div class="child-connector"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
